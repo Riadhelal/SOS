@@ -1,0 +1,35 @@
+
+(omod ARCH-SOS-Architecture is
+pr FLOAT  .
+pr BOOL  .
+pr INT .
+pr STRING .
+protecting NAT .
+inc CONFIGURATION . 
+
+****================================================================
+						*** Sorts ***
+	sorts SOS SUBSOS EVENT ROLE MISSION LINK TYPELINK .
+	subsort SOS < SUBSOS .
+	***subsort LINK < Oid .
+	
+****================================================================
+						***ops ***
+ops ECG-SOS SHM-SOS RMC-SOS HOR-SOS AMC-SOS NIL : -> SOS [ctor] . 
+***op SHC : -> EVENT [ctor] .
+ops WS-HMH HMH-SHI SHM-SOS-RMC-SOS CM-CIA RMC-SOS-AMC-SOS AMB-COM AMC-SOS-HOR-SOS HOS-RES NOLINK : -> LINK [ctor] .
+ops HealthDecline NOEVENT : -> EVENT [ctor] .
+	
+ops SOSLINK SUBSYSTEMLINK : -> TYPELINK [ctor] .
+
+ops WS HMH SHI CM CIA HOR RES HOS AMB COM NIL : -> SUBSOS [ctor] .
+***var WS : SUBSOS .
+ops DETECT ADJUST COLLECTDATA MONITORVITALS ALLOWS ANALYZE MANAGE IDENTIFY TRACK DISPATCH CONTACT COORDINATE RESERVE : -> ROLE [ctor] .
+ops EMERGENCYDIPATCH HEALTHMONITORING CRISISCONTROL HOSPITALISATION GLOBALMISSION : -> MISSION [ctor] .
+****================================================================
+class SystemOfSystems | ID : SOS, EV : EVENT, R : Set,M : MISSION .
+class SubSystem | ID : SUBSOS, EV : EVENT, R : ROLE .
+class LINKS | ID1 : SUBSOS, ID2 : SUBSOS, TYPE : TYPELINK . ****
+class LINKSOS | ID1 : SOS, ID2 : SOS, TYPE : TYPELINK .
+class Mission | ID : MISSION, L : Set, E : EVENT, R : Set . ****
+endom)

@@ -1,0 +1,58 @@
+
+(omod Arch-SOS-Configuration is
+
+pr FLOAT  .
+pr BOOL  .
+pr INT .
+pr STRING .
+protecting NAT .
+inc CONFIGURATION . 
+ex ARCH-SOS-Architecture .
+ex ARCH-SOS-Behavior .
+
+op SOSConfiguration : -> Configuration .
+eq SOSConfiguration
+=
+  	*** l'etat initiale 
+	< WS-subsystem : SubSystem | ID : WS, EV : HealthDecline, R : null >
+	< HMH-subsystem : SubSystem | ID : HMH, EV : HealthDecline, R : null >
+	< SHI-subsystem : SubSystem | ID : SHI, EV : HealthDecline, R : null >
+	< link1 : LINKS | ID1 : NIL, ID2 : NIL, TYPE : SUBSYSTEMLINK >
+	< link2 : LINKS | ID1 : NIL, ID2 : NIL, TYPE : SUBSYSTEMLINK > 
+	< SHM-System : SystemOfSystems | ID : SHM-SOS, EV : HealthDecline, R : (empty), M : HEALTHMONITORING >
+	
+	
+	< CM-subsystem : SubSystem | ID : CM, EV : HealthDecline, R : null >
+	< CIA-subsystem : SubSystem | ID : CIA, EV : HealthDecline, R : null >
+	***< HOR-subsystem : SubSystem | ID : HOR, EV : HealthDecline, R : null >
+	< link4 : LINKS | ID1 : NIL, ID2 : NIL, TYPE : SUBSYSTEMLINK > 
+	***< link5 : LINKS | ID1 : NIL, ID2 : NIL, TYPE : SUBSYSTEMLINK >
+	< RMC-System : SystemOfSystems | ID : RMC-SOS, EV : HealthDecline, R : (empty), M : CRISISCONTROL >
+	
+	< link3 : LINKSOS | ID1 : NIL, ID2 : NIL, TYPE : SOSLINK >
+	
+
+	
+ 	< AMB-subsystem : SubSystem | ID : AMB, EV : HealthDecline, R : null >
+ 	< COM-subsystem : SubSystem | ID : COM, EV : HealthDecline, R : null >
+	< link7 : LINKS | ID1 : NIL, ID2 : NIL, TYPE : SUBSYSTEMLINK >
+	< AMC-System : SystemOfSystems | ID : AMC-SOS, EV : HealthDecline, R : (empty), M : EMERGENCYDIPATCH >
+		< link6 : LINKSOS | ID1 : NIL, ID2 : NIL, TYPE : SOSLINK >
+		
+		< link8 : LINKSOS | ID1 : NIL, ID2 : NIL, TYPE : SOSLINK >
+	
+ 	< HOS-subsystem : SubSystem | ID : HOS, EV : HealthDecline, R : null >
+ 	< RES-subsystem : SubSystem | ID : RES, EV : HealthDecline, R : null >
+ 	< link9 : LINKS | ID1 : NIL, ID2 : NIL, TYPE : SUBSYSTEMLINK >
+	< HOR-System : SystemOfSystems | ID : HOR-SOS, EV : HealthDecline, R : (empty), M : HOSPITALISATION >
+	
+	
+	< ECG-System : SystemOfSystems | ID : ECG-SOS, EV : HealthDecline, R : (empty), M : EMERGENCYDIPATCH >
+	< Gmission : Mission | ID : EMERGENCYDIPATCH, L : (empty), E : HealthDecline, R : (empty) >
+	HealthDetect(HealthDecline) .	
+	
+	
+	
+	
+endom)
+

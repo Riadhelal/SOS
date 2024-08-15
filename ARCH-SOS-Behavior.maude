@@ -1,0 +1,201 @@
+(omod ARCH-SOS-Behavior is
+
+pr FLOAT  .
+pr BOOL  .
+pr INT .
+pr STRING .
+protecting NAT .
+inc CONFIGURATION . 
+ex ARCH-SOS-Architecture .
+					***create SOS/subSOS ***
+***vars s1 s2 s3  : SUBSOS .
+
+op BuildSOS : SUBSOS SUBSOS -> SOS .
+op BuildSOS : SOS SUBSOS -> SOS .
+op BuildSOS : SOS SOS -> SOS . 
+
+eq BuildSOS(WS,HMH) = SHM-SOS .
+eq BuildSOS(BuildSOS(WS,HMH),SHI) = SHM-SOS .
+eq BuildSOS(SHM-SOS,SHI) = SHM-SOS .
+eq BuildSOS(BuildSOS(SHM-SOS,RMC-SOS), BuildSOS(HOR-SOS, AMC-SOS)) = ECG-SOS .
+****================================================================
+					***ROLES/MISSION***
+op null : -> ROLE [ctor] .
+op null : -> MISSION [ctor] .
+					***creayte mission***
+					
+op _++_ : ROLE ROLE -> MISSION .
+op _++_ : ROLE MISSION -> MISSION .
+
+op _++_ : MISSION MISSION -> MISSION .
+
+eq DETECT ++ COLLECTDATA = HEALTHMONITORING .
+eq  ADJUST ++ HEALTHMONITORING = HEALTHMONITORING .
+   
+eq MANAGE ++ IDENTIFY = CRISISCONTROL .
+eq  ANALYZE ++ CRISISCONTROL = CRISISCONTROL .
+  
+eq DISPATCH ++ RESERVE = EMERGENCYDIPATCH .
+eq  COORDINATE ++ EMERGENCYDIPATCH = EMERGENCYDIPATCH .
+
+eq COORDINATE ++ RESERVE = HOSPITALISATION .
+eq HEALTHMONITORING ++ CRISISCONTROL = GLOBALMISSION .
+eq EMERGENCYDIPATCH ++ GLOBALMISSION = GLOBALMISSION .
+eq HOSPITALISATION ++ GLOBALMISSION = GLOBALMISSION .
+
+
+****affectation de roles 
+op ROLESUB : SUBSOS -> ROLE .
+eq ROLESUB(WS) = DETECT .
+eq ROLESUB(HMH) = COLLECTDATA .
+eq ROLESUB(SHI) = ADJUST .
+eq ROLESUB(CM) = MANAGE .
+eq ROLESUB(CIA) = ANALYZE .
+eq ROLESUB(HOR) = IDENTIFY .
+eq ROLESUB(AMB) = DISPATCH .
+eq ROLESUB(COM) = CONTACT .
+eq ROLESUB(HOS) = COORDINATE .
+eq ROLESUB(RES) = RESERVE .
+  
+****================================================================
+					*** LINK creation ***
+***class LINKS | ID : Nat, IDS1 : SUBSOS, IDS2 : SUBSOS .
+***lass SUBSOS | ID : SUBSOS, IDLink : Nat, event : EVENT, role : ROLE, M : MISSION .
+***var SHC e : EVENT .
+
+op createlink : SUBSOS SUBSOS -> LINK .
+op createlink : SOS SOS -> LINK .
+eq createlink(WS,HMH) = WS-HMH .
+
+eq createlink(HMH,SHI) = HMH-SHI .
+eq createlink(SHM-SOS,RMC-SOS) = SHM-SOS-RMC-SOS .
+eq createlink(CM,CIA) = CM-CIA .
+eq createlink(RMC-SOS,AMC-SOS) = RMC-SOS-AMC-SOS .
+eq createlink(AMB,COM) = AMB-COM .
+eq createlink(AMC-SOS,HOR-SOS) = AMC-SOS-HOR-SOS .
+eq createlink(HOS,RES) = HOS-RES .
+******slkjsqhlkfdjh
+
+****================================================================
+
+
+***
+ops ECG-SOS SHM-SOS RMC-SOS HOR-SOS AMC-SOS : -> SOS [ctor] . 
+
+
+
+ops DETECT ADJUST COLLECTDATA MONITORVITALS ALLOWS ANALYZE MANAGE IDENTIFY TRACK DISPATCH CONTACT COORDINATE RESERVE : -> ROLE [ctor] .
+ops EMERGENCYDIPATCH HEALTHMONITORING CRISISCONTROL HOSPITALISATION GLOBALMISSION  : -> MISSION [ctor] .
+
+***
+ops sub1 sub2 sub3 sub4 link1 link2 link3 link4 link5 link6 link7 link8 link9 link10 Gmission : -> Oid .
+ops WS-subsystem HMH-subsystem SHI-subsystem CM-subsystem CIA-subsystem HOR-subsystem AMB-subsystem COM-subsystem HOS-subsystem RES-subsystem SHM-System RMC-System AMC-System HOR-System ECG-System  : -> Oid .
+vars idsub1 idsub2 idsub3 idsub4 idsub5 idsub6 idsub7 idsub8 idsub9 idsub10 idsub11 : SUBSOS .
+var li : LINK .
+var e : EVENT .
+vars r1 r2 r3 r4 r5 r6 r7 r8 r9 r10 r11 r12 r13 : ROLE .
+
+
+****
+**** manippulation des listes 
+sort Set .
+subsorts ROLE SOS SUBSOS LINK < Set .
+op SOSelements : SUBSOS Set -> Set .
+
+op empty : -> Set [ctor] .
+op __ : Set Set -> Set [ctor assoc comm id: empty] .
+op lenght : Set -> Nat .
+op remove : SUBSOS Set -> Set .
+op add : SUBSOS Set -> Set .
+op addrole : ROLE Set -> Set .
+op addlink : LINK Set -> Set .
+var s : Set .
+var r1 s1 : ROLE .
+var li1 : LINK .
+eq add(s1, s) = (s1 s) .
+eq addrole(r1, s) = (r1 s) .
+eq addlink(li1, s) = (li1 s) .
+
+****     
+
+						***ops ***
+
+
+msg HealthDetect : EVENT -> Msg .
+**** regle de reaction 
+rl [HealthDetect] : 
+	*** SHM SOS and theiree subsystems
+	< WS-subsystem : SubSystem | ID : idsub1, EV : e, R : r1 >
+	< HMH-subsystem : SubSystem | ID : idsub2, EV : e, R : r2 >
+	< SHI-subsystem : SubSystem | ID : idsub3, EV : e, R : r3 >
+	< link1 : LINKS | ID1 : NIL, ID2 : NIL, TYPE : SUBSYSTEMLINK > 
+	< link2 : LINKS | ID1 : NIL, ID2 : NIL, TYPE : SUBSYSTEMLINK > 
+	< SHM-System : SystemOfSystems | ID : SHM-SOS, EV : e, R : s, M : HEALTHMONITORING >
+		
+	< link3 : LINKSOS | ID1 : NIL, ID2 : NIL, TYPE : SOSLINK >
+	
+	
+	< CM-subsystem : SubSystem | ID : idsub4, EV : e, R : r4 >
+	< CIA-subsystem : SubSystem | ID : idsub5, EV : e, R : r5 >
+	***< HOR-subsystem : SubSystem | ID : idsub6, EV : e, R : r6 >
+	< link4 : LINKS | ID1 : NIL, ID2 : NIL, TYPE : SUBSYSTEMLINK > 
+	***< link5 : LINKS | ID1 : NIL, ID2 : NIL, TYPE : SUBSYSTEMLINK >
+	< RMC-System : SystemOfSystems | ID : RMC-SOS, EV : e, R : s, M : CRISISCONTROL >
+	
+ 	< link6 : LINKSOS | ID1 : NIL, ID2 : NIL, TYPE : SOSLINK >
+	
+ 	< AMB-subsystem : SubSystem | ID : idsub7, EV : e, R : r7 >
+ 	< COM-subsystem : SubSystem | ID : idsub8, EV : e, R : r8 >
+ 	< link7 : LINKS | ID1 : NIL, ID2 : NIL, TYPE : SUBSYSTEMLINK >
+	< AMC-System : SystemOfSystems | ID : AMC-SOS, EV : e, R : s, M : EMERGENCYDIPATCH >
+	
+	*******
+	< link8 : LINKSOS | ID1 : NIL, ID2 : NIL, TYPE : SOSLINK >
+	
+ 	< HOS-subsystem : SubSystem | ID : idsub9, EV : e, R : r9 >
+ 	< RES-subsystem : SubSystem | ID : idsub10, EV : e, R : r10 >
+ 	< link9 : LINKS | ID1 : NIL, ID2 : NIL, TYPE : SUBSYSTEMLINK >
+	< HOR-System : SystemOfSystems | ID : HOR-SOS, EV : e, R : s, M : HOSPITALISATION >
+	
+	< ECG-System : SystemOfSystems | ID : ECG-SOS, EV : e, R : s, M : EMERGENCYDIPATCH >
+	***
+	< Gmission : Mission | ID : EMERGENCYDIPATCH, L : s, E : e, R : s >
+	
+	HealthDetect(e)
+	=>
+	
+	< WS-subsystem : SubSystem | ID : idsub1, EV : e, R : ROLESUB(WS) >
+	< HMH-subsystem : SubSystem | ID : idsub2, EV : e, R : ROLESUB(HMH) > 
+	< SHI-subsystem : SubSystem | ID : idsub3, EV : e, R : ROLESUB(SHI) >
+	< link1 : LINKS | ID1 : idsub1, ID2 : idsub2, TYPE : SUBSYSTEMLINK >
+	< link2 : LINKS | ID1 : idsub2, ID2 : idsub3, TYPE : SUBSYSTEMLINK > 
+	< SHM-System : SystemOfSystems | ID : SHM-SOS, EV : e, R : (ROLESUB(WS) ROLESUB(HMH) ROLESUB(SHI)), M : HEALTHMONITORING > 
+	***
+	< link3 : LINKS | ID1 : SHM-SOS, ID2 : RMC-SOS, TYPE : SOSLINK >
+	
+	< CM-subsystem : SubSystem | ID : idsub4, EV : e, R : ROLESUB(CM) >
+	< CIA-subsystem : SubSystem | ID : idsub5, EV : e, R : ROLESUB(CIA) > 
+	***< HOR-subsystem : SubSystem | ID : idsub6, EV : e, R : ROLESUB(HOR) >
+	< link4 : LINKS | ID1 : idsub4, ID2 : idsub5, TYPE : SUBSYSTEMLINK > 
+	***< link5 : LINKS | ID1 : idsub5, ID2 : idsub6, TYPE : SUBSYSTEMLINK >
+	<  RMC-System : SystemOfSystems | ID : RMC-SOS, EV : e, R : (ROLESUB(CM) ROLESUB(CIA) ROLESUB(HOR)), M : CRISISCONTROL >
+	
+ 	< link6 : LINKSOS | ID1 : RMC-SOS, ID2 : AMC-SOS, TYPE : SOSLINK >
+	
+ 	< AMB-subsystem : SubSystem | ID : idsub7, EV : e, R : ROLESUB(AMB) >
+ 	< COM-subsystem : SubSystem | ID : idsub8, EV : e, R : ROLESUB(COM) >
+ 	< link7 : LINKS | ID1 : idsub7, ID2 : idsub8, TYPE : SUBSYSTEMLINK >
+ 	< AMC-System : SystemOfSystems | ID : AMC-SOS, EV : e, R : (ROLESUB(AMB) ROLESUB(COM)), M : EMERGENCYDIPATCH >
+	
+	
+	< link8 : LINKSOS | ID1 : AMC-SOS, ID2 : HOR-SOS, TYPE : SOSLINK >
+	
+ 	< HOS-subsystem : SubSystem | ID : idsub9, EV : e, R : ROLESUB(HOS) >
+				< RES-subsystem : SubSystem | ID : idsub10, EV : e, R : ROLESUB(RES) >
+ 	< link9 : LINKS | ID1 : idsub9, ID2 : idsub10, TYPE : SUBSYSTEMLINK >
+	< HOR-System : SystemOfSystems | ID : HOR-SOS, EV : e, R : (ROLESUB(HOS) ROLESUB(RES)), M : HOSPITALISATION >
+	
+	< ECG-System : SystemOfSystems | ID : ECG-SOS, EV : e, R : (ROLESUB(WS) ROLESUB(HMH) ROLESUB(SHI) ROLESUB(CM) ROLESUB(CIA) ROLESUB(HOR) ROLESUB(AMB) ROLESUB(COM) ROLESUB(HOS) ROLESUB(RES)), M : EMERGENCYDIPATCH >
+	< Gmission : Mission | ID : EMERGENCYDIPATCH, L : (createlink(WS,HMH) createlink(HMH,SHI) createlink(SHM-SOS,RMC-SOS) createlink(CM,CIA) createlink(RMC-SOS,AMC-SOS) createlink(AMB,COM) createlink(AMC-SOS,HOR-SOS) createlink(HOS,RES)), E : e, R : (ROLESUB(WS) ROLESUB(HMH) ROLESUB(SHI) ROLESUB(CM) ROLESUB(CIA) ROLESUB(AMB) ROLESUB(COM) ROLESUB(HOS) ROLESUB(RES)) >
+	.
+endom)
