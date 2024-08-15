@@ -1,0 +1,2 @@
+execution commande :
+  (rew SoSConfiguration.)
